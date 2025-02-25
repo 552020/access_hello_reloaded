@@ -1,8 +1,8 @@
-# Project Name
+# ACCESS HELLO RELOADED - WIP
 
 ## Overview
 
-This project builds on the access_hello from the section 3.6 of the Mokoto Liftoff https://internetcomputer.org/docs/current/tutorials/developer-liftoff/level-3/3.6-motoko-lvl3#principals-and-caller-identification
+This project builds on the access_hello app from the section 3.6 of the Mokoto Liftoff https://internetcomputer.org/docs/current/tutorials/developer-liftoff/level-3/3.6-motoko-lvl3#principals-and-caller-identification
 
 The demo application `access_hello` is not part of the examples and it is developed during the unit. It focus primarly on backend authentication/authorization.
 
