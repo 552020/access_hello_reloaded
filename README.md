@@ -4,47 +4,55 @@
 
 This project builds on the access_hello from the section 3.6 of the Mokoto Liftoff https://internetcomputer.org/docs/current/tutorials/developer-liftoff/level-3/3.6-motoko-lvl3#principals-and-caller-identification
 
-It focus primarly on authentication/authorization.
+The demo application `access_hello` is not part of the examples and it is developed during the unit. It focus primarly on backend authentication/authorization.
 
-## Understanding `shared({ caller = initializer }) actor class()`
+## Principal Modifications of the Original access_hello Code
 
-In Motoko, the `shared` keyword is used to declare functions that can be called from outside the canister. When used in an actor class declaration, it allows you to capture the identity of the entity deploying the actor.
+1. **Role System Changes**
 
-### Key Concepts
+   - Added new roles: #premium and #guest
+   - Changed #authorized to #user for clarity
 
-1. **Shared Functions**: These are functions that can be invoked externally. They can access the caller's identity through a special parameter.
+2. **Authorization System Simplification**
 
-2. **Caller Identification**: The `({ caller = initializer })` pattern captures the `caller` field from the message object provided to shared functions. This `caller` is of type `Principal` and represents the identity of the entity that creates the actor.
+   - Replaced permission-based system with simpler role-based checks:
+     - Removed Permission type entirely
+     - Removed has_permission function
+     - Added is_admin function as the main authorization check
+   - Replaced require_permission with reject_if_not_admin
 
-3. **Initializer**: By binding the `caller` to `initializer`, the code stores the Principal of the entity that deploys the actor. This Principal can be used for access control, often granting special privileges to the deployer.
+3. **Greeting Logic Updates**
 
-### Example Usage
+   - Changed from if/else to switch statement
+   - Added different greetings for each role
+   - Made messages more specific to each role type
+
+4. **Function Improvements**
+
+   - assign_role now returns Text feedback instead of Unit
+   - Added better error messages
+   - Renamed functions for clarity:
+     - callerPrincipal → get_caller_principal
+     - my_role → get_caller_role
+     - my_role_request → get_caller_role_request
+
+## TODO
+
+- [ ] Check if the user is anonymous
 
 ```motoko
-shared({ caller = initializer }) actor class() {
-    // The initializer is captured here
-    public shared({ caller }) func greet(name : Text) : async Text {
-        if (has_permission(caller, #assign_role)) {
-            return "Hello, " # name # ". You have a role with administrative privileges.";
-        } else if (has_permission(caller, #lowest)) {
-            return "Welcome, " # name # ". You have an authorized account. Would you like to play a game?";
-        } else {
-            return "Greetings, " # name # ". Nice to meet you!";
-        }
-    };
-
-    // Other functions and logic...
-}
+   actor {
+       public shared (msg) func whoami() : async Text {
+           if (msg.caller == Principal.anonymous()) {
+               return "You are not authenticated!";
+           } else {
+               return "Your Principal ID is: " # Principal.toText(msg.caller);
+           };
+       };
+   };
 ```
 
-### Benefits
-
-- **Security**: Capturing the initializer at the actor class level is secure, as it's handled by the system, preventing manipulation.
-- **Access Control**: The initializer can be given special roles or permissions, such as being the owner or having administrative rights.
-
-### Additional Information
-
-For more details on caller identification and access control in Motoko, refer to the [Caller identification](https://internetcomputer.org/docs/current/motoko/main/writing-motoko/caller-id) section of the Internet Computer documentation.
+## Example Usage of the backend
 
 ### Interacting with the dapp
 
