@@ -100,7 +100,7 @@ const App: React.FC = () => {
     if (!inputElement) return;
 
     const name = inputElement.value;
-    const response = await access_hello_backend.greet(name);
+    const response = await access_hello_backend.greet_alt(name);
     setGreeting(response);
   };
 
