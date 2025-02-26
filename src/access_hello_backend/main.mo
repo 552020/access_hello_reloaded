@@ -125,4 +125,17 @@ shared({ caller = initializer }) actor class() {
 		await reject_if_not_admin(caller);
 		return roles;
 	};
+	// We want to auto-assign the user role to all new users who logged int
+	public shared({ caller }) func auto_assign_user_role() : async Text {
+		switch (get_role(caller)) {
+			case (null) {
+				// Only assign if they don't already have a role
+				roles := AssocList.replace<Principal, Role>(roles, caller, principal_eq, ?#user).0;
+				"Successfully assigned user role"
+			};
+			case (_) {
+				"User already has a role"
+			};
+		};
+	};
 }
