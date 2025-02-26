@@ -10,7 +10,7 @@ export default function Profile() {
   const { identity } = useAuth();
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
   const [pendingRequest, setPendingRequest] = useState<boolean>(false);
-  const [selectedRole, setSelectedRole] = useState<"user" | "premium" | "guest" | "admin">("user");
+  const [selectedRole, setSelectedRole] = useState<"user" | "premium" | "admin">("user");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -55,6 +55,12 @@ export default function Profile() {
     }
   };
 
+  // Get current role as string
+  const getCurrentRoleString = () => {
+    if (!currentRole) return null;
+    return Object.keys(currentRole)[0];
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -62,41 +68,35 @@ export default function Profile() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="font-medium">Your Principal ID:</h3>
-          <p className="text-sm text-muted-foreground break-all">{identity?.getPrincipal().toString()}</p>
+          <h3 className="text-lg font-medium">Your Principal ID:</h3>
+          <p className="text-gray-600">{identity?.getPrincipal().toString()}</p>
         </div>
-
         <div>
-          <h3 className="font-medium">Current Role:</h3>
-          <p className="text-sm text-muted-foreground">
-            {currentRole ? Object.keys(currentRole)[0] : "No role assigned"}
-          </p>
+          <h3 className="text-lg font-medium">Current Role:</h3>
+          <p className="text-gray-600">{getCurrentRoleString() || "No role assigned"}</p>
         </div>
 
-        {!currentRole && !pendingRequest && (
-          <div className="space-y-4">
-            <Select
-              onValueChange={(value: "user" | "premium" | "guest" | "admin") => setSelectedRole(value)}
-              defaultValue="user"
-            >
+        {!pendingRequest ? (
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium">Request Role Change:</h3>
+            <Select onValueChange={(value: "user" | "premium" | "admin") => setSelectedRole(value)} defaultValue="user">
               <SelectTrigger>
-                <SelectValue placeholder="Select a role" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="user">User</SelectItem>
                 <SelectItem value="premium">Premium</SelectItem>
-                <SelectItem value="guest">Guest</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={handleRequestRole}>Request {selectedRole} Role</Button>
+            <Button onClick={handleRequestRole} disabled={getCurrentRoleString() === selectedRole}>
+              Request Role Change
+            </Button>
           </div>
-        )}
-
-        {pendingRequest && (
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Your role request is pending approval</p>
-            <Button variant="outline" size="sm" onClick={handleRevokeRequest}>
+        ) : (
+          <div>
+            <p className="text-yellow-600">Your role request is pending approval</p>
+            <Button variant="outline" onClick={handleRevokeRequest}>
               Cancel Request
             </Button>
           </div>

@@ -169,4 +169,33 @@ shared({ caller = initializer }) actor class() {
 			};
 		};
 	};
+
+	public shared({ caller }) func reject_role_request(assignee: Principal) : async Text {
+		await reject_if_not_admin(caller);
+		
+		switch (AssocList.find<Principal, Role>(role_requests, assignee, principal_eq)) {
+			case (null) {
+				return "No pending request found for this principal";
+			};
+			case (_) {
+				role_requests := AssocList.replace<Principal, Role>(role_requests, assignee, principal_eq, null).0;
+				return "Request rejected successfully";
+			};
+		};
+	};
+
+	public shared({ caller }) func accept_role_request(assignee: Principal) : async Text {
+		await reject_if_not_admin(caller);
+		
+		switch (AssocList.find<Principal, Role>(role_requests, assignee, principal_eq)) {
+			case (null) {
+				return "No pending request found for this principal";
+			};
+			case (?requested_role) {
+				roles := AssocList.replace<Principal, Role>(roles, assignee, principal_eq, ?requested_role).0;
+				role_requests := AssocList.replace<Principal, Role>(role_requests, assignee, principal_eq, null).0;
+				return "Request accepted successfully: " # debug_show(requested_role);
+			};
+		};
+	};
 }

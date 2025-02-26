@@ -1,5 +1,4 @@
 import { AuthClient } from "@dfinity/auth-client";
-import { autoAssignUserRole } from "./roles";
 
 // Helper function for II URL
 export function identityProvider() {
