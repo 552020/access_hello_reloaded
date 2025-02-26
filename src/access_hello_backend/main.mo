@@ -138,4 +138,16 @@ shared({ caller = initializer }) actor class() {
 			};
 		};
 	};
+
+	public shared({ caller }) func revoke_role_request() : async Text {
+		switch (AssocList.find<Principal, Role>(role_requests, caller, principal_eq)) {
+			case (null) {
+				"No pending request found";
+			};
+			case (?_) {
+				role_requests := AssocList.replace<Principal, Role>(role_requests, caller, principal_eq, null).0;
+				"Request revoked successfully";
+			};
+		};
+	};
 }

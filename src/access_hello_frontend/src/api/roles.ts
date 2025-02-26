@@ -33,3 +33,7 @@ export const autoAssignUserRoleAtLogin = async (authClient: AuthClient) => {
   await login(authClient);
   await autoAssignUserRole();
 };
+
+export const revokeRoleRequest = async () => {
+  return await access_hello_backend.revoke_role_request();
+};

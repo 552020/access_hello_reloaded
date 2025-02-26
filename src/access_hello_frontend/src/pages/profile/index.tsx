@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
-import { getCurrentRole, getPendingRequest, requestRole } from "@/api/roles";
+import { getCurrentRole, getPendingRequest, requestRole, revokeRoleRequest } from "@/api/roles";
 import { Role } from "../../../../declarations/access_hello_backend/access_hello_backend.did";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -41,6 +41,15 @@ export default function Profile() {
     }
   };
 
+  const handleRevokeRequest = async () => {
+    try {
+      await revokeRoleRequest();
+      setPendingRequest(false);
+    } catch (error) {
+      console.error("Error revoking request:", error);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -55,7 +64,7 @@ export default function Profile() {
         <div>
           <h3 className="font-medium">Current Role:</h3>
           <p className="text-sm text-muted-foreground">
-            {currentRole ? Object.keys(currentRole)[0].replace("#", "") : "No role assigned"}
+            {currentRole ? Object.keys(currentRole)[0] : "No role assigned"}
           </p>
         </div>
 
@@ -79,7 +88,14 @@ export default function Profile() {
           </div>
         )}
 
-        {pendingRequest && <p className="text-sm text-muted-foreground">Your role request is pending approval</p>}
+        {pendingRequest && (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">Your role request is pending approval</p>
+            <Button variant="outline" size="sm" onClick={handleRevokeRequest}>
+              Cancel Request
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
