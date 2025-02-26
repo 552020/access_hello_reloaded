@@ -110,25 +110,58 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <main>
-        <br />
-        <br />
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="name">Enter your name: &nbsp;</label>
-          <input id="name" alt="Name" type="text" />
-          <button type="submit">Click Me!</button>
-        </form>
-        <section id="greeting">{greeting}</section>
-        <center>
-          {isAuthenticated ? (
-            <button onClick={handleLogout}>Logout</button>
-          ) : (
-            <button onClick={handleLogin}>Login</button>
-          )}
-          <button onClick={handleWhoAmI}>Who am I?</button>
-        </center>
-      </main>
+    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <main className="space-y-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="name" className="text-gray-700">
+                Enter your name:
+              </label>
+              <input
+                id="name"
+                alt="Name"
+                type="text"
+                className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Click Me!
+            </button>
+          </form>
+
+          <section id="greeting" className="text-center text-lg text-gray-800">
+            {greeting}
+          </section>
+
+          <div className="flex justify-center gap-4">
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+              >
+                Login
+              </button>
+            )}
+            <button
+              onClick={handleWhoAmI}
+              className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600 transition-colors"
+            >
+              Who am I?
+            </button>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
