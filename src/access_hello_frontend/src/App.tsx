@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import { Actor, Identity } from "@dfinity/agent";
 import { access_hello_backend } from "../../declarations/access_hello_backend";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Define authentication options
 const days = BigInt(1);
@@ -111,8 +113,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <main className="space-y-6">
+      <Card className="max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle>Internet Identity Demo</CardTitle>
+          <CardDescription>Authenticate and interact with your Internet Identity</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <label htmlFor="name" className="text-gray-700">
@@ -125,43 +131,35 @@ const App: React.FC = () => {
                 className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-            >
+            <Button type="submit" className="w-full">
               Click Me!
-            </button>
+            </Button>
           </form>
 
-          <section id="greeting" className="text-center text-lg text-gray-800">
-            {greeting}
-          </section>
+          {greeting && (
+            <Card className="bg-gray-50">
+              <CardContent className="pt-6">
+                <p className="text-center text-lg text-gray-800">{greeting}</p>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="flex justify-center gap-4">
             {isAuthenticated ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
-              >
+              <Button onClick={handleLogout} variant="destructive">
                 Logout
-              </button>
+              </Button>
             ) : (
-              <button
-                onClick={handleLogin}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
-              >
+              <Button onClick={handleLogin} variant="default">
                 Login
-              </button>
+              </Button>
             )}
-            <button
-              onClick={handleWhoAmI}
-              className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600 transition-colors"
-            >
+            <Button onClick={handleWhoAmI} variant="secondary">
               Who am I?
-            </button>
+            </Button>
           </div>
-        </main>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
