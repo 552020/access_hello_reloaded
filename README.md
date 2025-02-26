@@ -4,7 +4,7 @@
 
 This sample project consists of a backend and a frontend.
 
-The **backend** builds on the **access_hello** app from the section 3.6 of the Mokoto Liftoff https://internetcomputer.org/docs/current/tutorials/developer-liftoff/level-3/3.6-motoko-lvl3#principals-and-caller-identification. The demo application `access_hello` is not part of the [official examples](https://github.com/dfinity/examples) and its code is to find only in that lesson or in this other repo. It focus primarly on backend authentication/authorization.
+The **backend** builds on the **access_hello** app from the section 3.6 of the Mokoto Liftoff https://internetcomputer.org/docs/current/tutorials/developer-liftoff/level-3/3.6-motoko-lvl3#principals-and-caller-identification. The demo application `access_hello` is not part of the [official examples](https://github.com/dfinity/examples) and its code is to find only in that lesson or in this other repo [add link to my repo]. It focuses primarly on backend authentication/authorization.
 
 Thr **frontend** builds on the sample app built in the guide [Integrating with II]https://internetcomputer.org/docs/current/developer-docs/identity/internet-identity/integrate-internet-identity. The original project has been refactored from [Lit](https://lit.dev/) into React/Vite.
 
