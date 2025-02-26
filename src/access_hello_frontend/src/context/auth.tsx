@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import { Actor, Identity } from "@dfinity/agent";
 import { access_hello_backend } from "../../../declarations/access_hello_backend";
+import { login, logout } from "@/api/auth";
 
 // Constants from demo
 const days = BigInt(1);
@@ -46,32 +47,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async () => {
+  const handleLogin = async () => {
     if (!authClient) return;
-
-    await new Promise<void>((resolve, reject) =>
-      authClient.login({
-        identityProvider: identityProvider(),
-        onSuccess: async () => {
-          setIsAuthenticated(true);
-          resolve();
-        },
-        onError: reject,
-      })
-    );
-
+    await login(authClient);
     await updateIdentity(authClient);
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
     if (!authClient) return;
-    await authClient.logout();
-    setIsAuthenticated(false);
-    setIdentity(null);
+    await logout(authClient);
     await updateIdentity(authClient);
   };
 
-  return <AuthContext.Provider value={{ isAuthenticated, identity, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        identity,
+        login: handleLogin,
+        logout: handleLogout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
@@ -80,15 +79,4 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
-
-// Helper function for II URL
-function identityProvider() {
-  if (process.env.DFX_NETWORK === "local") {
-    return `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`;
-  } else if (process.env.DFX_NETWORK === "ic") {
-    return `https://${process.env.CANISTER_ID_INTERNET_IDENTITY}.ic0.app`;
-  } else {
-    return `https://${process.env.CANISTER_ID_INTERNET_IDENTITY}.dfinity.network`;
-  }
 }
