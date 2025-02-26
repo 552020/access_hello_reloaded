@@ -4,6 +4,7 @@ import environment from "vite-plugin-environment";
 import dotenv from "dotenv";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 
 // Load .env from project root
 dotenv.config({ path: "../../.env" });
@@ -38,6 +39,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: [
+      {
+        find: "@",
+        replacement: path.resolve(__dirname, "./src"),
+      },
       {
         find: "declarations",
         replacement: fileURLToPath(new URL("../declarations", import.meta.url)),
