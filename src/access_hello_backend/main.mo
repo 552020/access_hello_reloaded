@@ -1,8 +1,21 @@
 import AssocList "mo:base/AssocList";
 import Error "mo:base/Error";
 import List "mo:base/List";
+import Principal "mo:base/Principal";
 
 shared({ caller = initializer }) actor class() {
+
+	// This is the greet function from the auth-ii example.
+	public shared(msg) func greet_alt(name : Text) : async Text {
+        return "Hello, " # name # "! Your principal is: " # Principal.toText(msg.caller);
+    };
+
+	// Original auth-ii whoami function
+    public shared query (msg) func whoami() : async Principal {
+        msg.caller
+    };
+	
+	// This is the greet function from the access-hello project. 
 	public shared({ caller }) func greet(name : Text) : async Text {
 		switch (get_role(caller)) {
 			case (?#owner or ?#admin) {
