@@ -1,5 +1,21 @@
 # Access Hello Reloaded - WIP
 
+## TODOs
+
+### Admin Dashboard
+
+- [ ] Test complete request flow (request → approve/reject)
+- [ ] Add direct role management (promote/downgrade without request)
+- [ ] Add user list view
+- [ ] Add error/success notifications
+
+### User Profile
+
+- [ ] Add username field
+- [ ] Create backend storage for usernames
+- [ ] Add username display in admin dashboard
+- [ ] Add username validation
+
 ## Overview
 
 This sample project consists of a backend and a frontend.
