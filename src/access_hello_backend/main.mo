@@ -2,6 +2,7 @@ import AssocList "mo:base/AssocList";
 import Error "mo:base/Error";
 import List "mo:base/List";
 import Principal "mo:base/Principal";
+import Debug "mo:base/Debug";
 
 shared({ caller = initializer }) actor class() {
 
@@ -127,25 +128,40 @@ shared({ caller = initializer }) actor class() {
 	};
 	// We want to auto-assign the user role to all new users who logged int
 	public shared({ caller }) func auto_assign_user_role() : async Text {
+		let callerText = Principal.toText(caller);
+		Debug.print("auto_assign_user_role called by: " # callerText);
+		Debug.print("Current roles: " # debug_show(roles));
+		Debug.print("Current role requests: " # debug_show(role_requests));
+		
 		switch (get_role(caller)) {
 			case (null) {
-				// Only assign if they don't already have a role
+				Debug.print("No role found, assigning user role");
 				roles := AssocList.replace<Principal, Role>(roles, caller, principal_eq, ?#user).0;
+				Debug.print("After assignment - roles: " # debug_show(roles));
 				"Successfully assigned user role"
 			};
-			case (_) {
+			case (?role) {
+				Debug.print("User already has role: " # debug_show(role));
 				"User already has a role"
 			};
 		};
 	};
 
 	public shared({ caller }) func revoke_role_request() : async Text {
+		let callerText = Principal.toText(caller);
+		Debug.print("revoke_role_request called by: " # callerText);
+		Debug.print("Current roles: " # debug_show(roles));
+		Debug.print("Current role requests: " # debug_show(role_requests));
+		
 		switch (AssocList.find<Principal, Role>(role_requests, caller, principal_eq)) {
 			case (null) {
+				Debug.print("No pending request found for caller");
 				"No pending request found";
 			};
-			case (?_) {
+			case (?role) {
+				Debug.print("Found pending request: " # debug_show(role));
 				role_requests := AssocList.replace<Principal, Role>(role_requests, caller, principal_eq, null).0;
+				Debug.print("After revocation - role requests: " # debug_show(role_requests));
 				"Request revoked successfully";
 			};
 		};
