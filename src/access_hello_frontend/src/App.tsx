@@ -10,6 +10,18 @@ const days = BigInt(1);
 const hours = BigInt(24);
 const nanoseconds = BigInt(3600000000000);
 
+// Function to get the correct II URL
+const identityProvider = () => {
+  if (process.env.DFX_NETWORK === "local") {
+    return `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`;
+  } else if (process.env.DFX_NETWORK === "ic") {
+    return `https://${process.env.CANISTER_ID_INTERNET_IDENTITY}.ic0.app`;
+  } else {
+    return `https://${process.env.CANISTER_ID_INTERNET_IDENTITY}.dfinity.network`;
+  }
+};
+
+// Use the function in defaultOptions
 const defaultOptions = {
   createOptions: {
     idleOptions: {
@@ -17,10 +29,7 @@ const defaultOptions = {
     },
   },
   loginOptions: {
-    identityProvider:
-      process.env.DFX_NETWORK === "ic"
-        ? "https://identity.ic0.app/#authorize"
-        : `http://localhost:4943?canisterId=${process.env.CANISTER_ID_INTERNET_IDENTITY}#authorize`,
+    identityProvider: identityProvider(),
     maxTimeToLive: days * hours * nanoseconds,
   },
 };
@@ -35,7 +44,8 @@ const App: React.FC = () => {
   // Initialize AuthClient and check session
   useEffect(() => {
     const initializeAuthClient = async () => {
-      const client = await AuthClient.create(defaultOptions.createOptions);
+      //   const client = await AuthClient.create(defaultOptions.createOptions);
+      const client = await AuthClient.create();
       setAuthClient(client);
 
       if (await client.isAuthenticated()) {
@@ -76,7 +86,7 @@ const App: React.FC = () => {
 
     await new Promise<void>((resolve, reject) =>
       authClient.login({
-        ...defaultOptions.loginOptions,
+        identityProvider: identityProvider(),
         onSuccess: resolve,
         onError: reject,
       })

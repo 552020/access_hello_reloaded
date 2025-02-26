@@ -48,7 +48,9 @@ class App {
    * Create AuthClient, this loads an existing session if available
    */
   #createAuthClient = async () => {
-    this.#authClient = await AuthClient.create(defaultOptions.createOptions);
+    // this.#authClient = await AuthClient.create(defaultOptions.createOptions);
+    this.authClient = await AuthClient.create();
+
     await this.#onIdentityUpdate();
   };
 
@@ -63,9 +65,16 @@ class App {
    * Login with AuthClient, this should be called without any delay in a click handler
    */
   #handleLogin = async () => {
+    // await new Promise((resolve, reject) =>
+    //   this.#authClient.login({
+    //     ...defaultOptions.loginOptions,
+    //     onSuccess: resolve,
+    //     onError: reject,
+    //   })
+    // );
     await new Promise((resolve, reject) =>
-      this.#authClient.login({
-        ...defaultOptions.loginOptions,
+      this.authClient.login({
+        identityProvider: this.#identityProvider(),
         onSuccess: resolve,
         onError: reject,
       })
@@ -102,11 +111,11 @@ class App {
           <input id="name" alt="Name" type="text" />
           <button type="submit">Click Me!</button>
         </form>
-        <section id="greeting">${this.greeting}</section>
         <center>
           ${this.isAuthenticated ? html`<button id="logout">Logout</button>` : html`<button id="login">Login</button>`}
           <button id="whoami">Who am I?</button>
         </center>
+        <section id="greeting">${this.greeting}</section>
       </main>
     `;
     render(body, document.getElementById("root"));
@@ -120,7 +129,7 @@ class App {
    */
   #handleWhoAmI = async () => {
     const principal = await ii_backend.whoami();
-    this.greeting = `Your principal is: ${principal}`;
+    this.greeting = `Your principal is: ${principal.toText()}`;
     this.#render();
   };
 }
