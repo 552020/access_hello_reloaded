@@ -14,22 +14,20 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      console.log("Fetching user data...");
-      const [roleArray, request] = await Promise.all([getCurrentRole(), getPendingRequest()]);
+      console.log("[Profile] Starting to fetch user data");
+      console.log("[Profile] Current Identity Principal:", identity?.getPrincipal().toString());
 
-      console.log("Role Array:", roleArray);
-      console.log("Request:", request);
+      const [role, request] = await Promise.all([getCurrentRole(), getPendingRequest()]);
 
-      const role = roleArray.length > 0 ? roleArray[0] : null;
-      console.log("Parsed Role:", role);
+      console.log("[Profile] Fetched Role:", role);
+      console.log("[Profile] Fetched Request:", request);
 
       setCurrentRole(role);
-      setPendingRequest(request !== null);
-      console.log("Pending Request State:", request !== null);
+      setPendingRequest(request.length > 0);
     };
 
     fetchUserData();
-  }, []);
+  }, [identity]);
 
   const roleMapping: Record<string, Role> = {
     user: { user: null },

@@ -3,7 +3,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { Actor, Identity } from "@dfinity/agent";
 import { access_hello_backend } from "../../../declarations/access_hello_backend";
 import { login, logout } from "@/api/auth";
-
+import { autoAssignUserRole } from "@/api/roles";
 // Constants from demo
 const days = BigInt(1);
 const hours = BigInt(24);
@@ -38,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateIdentity = async (client: AuthClient) => {
     const newIdentity = client.getIdentity();
+    console.log("[Auth Context] Updating Identity - Principal:", newIdentity.getPrincipal().toString());
     setIdentity(newIdentity);
     setIsAuthenticated(await client.isAuthenticated());
 
@@ -49,8 +50,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleLogin = async () => {
     if (!authClient) return;
+    console.log("[Auth Context] Starting login process");
     await login(authClient);
     await updateIdentity(authClient);
+    console.log("[Auth Context] Assigning user role");
+    await autoAssignUserRole();
+    console.log("[Auth Context] Login completed");
   };
 
   const handleLogout = async () => {

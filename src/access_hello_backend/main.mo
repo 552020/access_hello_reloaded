@@ -110,7 +110,12 @@ shared({ caller = initializer }) actor class() {
 	};
 
 	public shared({ caller }) func get_caller_role() : async ?Role {
-		return get_role(caller);
+		Debug.print("get_caller_role called by: " # Principal.toText(caller));
+		Debug.print("Current roles: " # debug_show(roles));
+		
+		let result = get_role(caller);
+		Debug.print("Result: " # debug_show(result));
+		return result;
 	};
 
 	public shared({ caller }) func get_caller_role_request() : async ?Role {
@@ -130,18 +135,16 @@ shared({ caller = initializer }) actor class() {
 	public shared({ caller }) func auto_assign_user_role() : async Text {
 		let callerText = Principal.toText(caller);
 		Debug.print("auto_assign_user_role called by: " # callerText);
-		Debug.print("Current roles: " # debug_show(roles));
-		Debug.print("Current role requests: " # debug_show(role_requests));
+		Debug.print("Current roles before assignment: " # debug_show(roles));
 		
 		switch (get_role(caller)) {
 			case (null) {
-				Debug.print("No role found, assigning user role");
 				roles := AssocList.replace<Principal, Role>(roles, caller, principal_eq, ?#user).0;
 				Debug.print("After assignment - roles: " # debug_show(roles));
 				"Successfully assigned user role"
 			};
-			case (?role) {
-				Debug.print("User already has role: " # debug_show(role));
+			case (_) {
+				Debug.print("User already has role");
 				"User already has a role"
 			};
 		};
